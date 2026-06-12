@@ -245,3 +245,35 @@ Este projeto está em evolução e será expandido para:
 * arquitetura modular
 * alta escalabilidade
 * integração com serviços externos
+
+---
+
+# 🛠️ Execução de Desenvolvimento Simplificada (H2 & JDK 21 Portátil)
+
+Para facilitar o início do desenvolvimento local sem a necessidade de configurar o PostgreSQL ou o Flyway de imediato, implementamos um perfil de teste com banco em memória H2 e desabilitamos a autenticação do Spring Security para os endpoints públicos de serviços.
+
+### 1️⃣ Inicializar a Aplicação
+
+Para executar a aplicação utilizando a JDK 21 portátil local, utilize o PowerShell:
+
+```powershell
+$env:JAVA_HOME="C:\Users\User\.gemini\antigravity-ide\brain\097bd129-8c1c-48b3-adab-3858ff276103\scratch\jdk21\jdk-21.0.11+10"
+.\mvnw.cmd spring-boot:run
+```
+
+O banco será populado na inicialização com dados mockados (2 empregadores, 1 prestador e 3 anúncios de serviços ativos).
+
+### 2️⃣ Acessar o Banco de Dados (Console Web)
+
+* URL: http://localhost:8080/h2-console
+* JDBC URL: jdbc:h2:mem:limiodb
+* User Name: sa
+* Password: (deixe em branco)
+
+### 3️⃣ Testar Endpoints Locais (PowerShell)
+
+* Listagem de Serviços Disponíveis (Status AGUARDANDO_ACEITE):
+  ```powershell
+  Invoke-RestMethod -Uri "http://localhost:8080/api/servicos" -Method Get
+  ```
+
