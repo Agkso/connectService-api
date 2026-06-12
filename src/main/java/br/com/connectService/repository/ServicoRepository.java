@@ -1,0 +1,12 @@
+package br.com.connectService.repository;
+
+import br.com.connectService.entity.Servico;
+import br.com.connectService.entity.StatusServico;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import java.util.List;
+
+@Repository
+public interface ServicoRepository extends JpaRepository<Servico, Long> {
+    List<Servico> findByStatus(StatusServico status);
+}
