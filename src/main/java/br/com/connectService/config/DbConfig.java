@@ -13,21 +13,44 @@ import java.net.URISyntaxException;
 public class DbConfig {
 
     @Bean
-    public DataSource dataSource() throws java.net.URISyntaxException {
+    public DataSource dataSource() throws URISyntaxException {
         String databaseUrl = System.getenv("DATABASE_URL");
-        if (databaseUrl == null) {
-            throw new IllegalStateException("DATABASE_URL environment variable is missing!");
-        }
-        java.net.URI dbUri = new java.net.URI(databaseUrl);
-        String username = dbUri.getUserInfo().split(":")[0];
-        String password = dbUri.getUserInfo().split(":")[1];
-        String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ":" + dbUri.getPort() + dbUri.getPath();
+        String jdbcUrl;
+        String username;
+        String password;
 
-        HikariDataSource dataSource = new HikariDataSource();
-        dataSource.setJdbcUrl(dbUrl);
-        dataSource.setUsername(username);
-        dataSource.setPassword(password);
-        dataSource.setDriverClassName("org.postgresql.Driver");
-        return dataSource;
+        if (databaseUrl != null && !databaseUrl.isBlank()) {
+            URI dbUri = new URI(databaseUrl);
+            username = dbUri.getUserInfo().split(":")[0];
+            password = dbUri.getUserInfo().split(":")[1];
+            jdbcUrl = "jdbc:postgresql://" + dbUri.getHost() + ":" + dbUri.getPort() + dbUri.getPath();
+        } else {
+            String pgHost = System.getenv("PGHOST");
+            String pgPort = System.getenv("PGPORT");
+            String pgDatabase = System.getenv("PGDATABASE");
+            username = System.getenv("PGUSER");
+            password = System.getenv("PGPASSWORD");
+
+            if (pgHost == null || pgPort == null || pgDatabase == null) {
+                String dbPublicUrl = System.getenv("DATABASE_PUBLIC_URL");
+                if (dbPublicUrl != null && !dbPublicUrl.isBlank()) {
+                    URI dbUri = new URI(dbPublicUrl);
+                    username = dbUri.getUserInfo().split(":")[0];
+                    password = dbUri.getUserInfo().split(":")[1];
+                    jdbcUrl = "jdbc:postgresql://" + dbUri.getHost() + ":" + dbUri.getPort() + dbUri.getPath();
+                } else {
+                    throw new IllegalStateException("Nenhuma variavel de ambiente de banco de dados encontrada (DATABASE_URL, PGHOST ou DATABASE_PUBLIC_URL)");
+                }
+            } else {
+                jdbcUrl = "jdbc:postgresql://" + pgHost + ":" + pgPort + "/" + pgDatabase;
+            }
+        }
+
+        HikariDataSource ds = new HikariDataSource();
+        ds.setJdbcUrl(jdbcUrl);
+        ds.setUsername(username);
+        ds.setPassword(password);
+        ds.setDriverClassName("org.postgresql.Driver");
+        return ds;
     }
 }
