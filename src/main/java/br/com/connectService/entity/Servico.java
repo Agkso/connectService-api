@@ -3,7 +3,7 @@ package br.com.connectService.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "servicos")
@@ -21,41 +21,44 @@ public class Servico {
     @Column(nullable = false)
     private String tipoServico;
 
-    private String tamanhoLocal;
-    private Integer quantidadePessoas;
+    @Column(nullable = false)
+    private String categoria;
 
     @Column(nullable = false)
-    private LocalDateTime dataHora;
+    private String bairro;
 
     @Column(nullable = false)
-    private String localizacao;
-
-    @Column(columnDefinition = "TEXT")
-    private String observacoes;
+    private String cidade;
 
     @Column(nullable = false)
-    private BigDecimal valorSugerido;
+    private String estado;
 
     @Column(nullable = false)
-    private BigDecimal valorLiquido;
+    private String endereco;
+
+    @Column(nullable = false)
+    private BigDecimal valor;
+
+    @Column(name = "data_servico", nullable = false)
+    private LocalDate dataServico;
+
+    @Column(name = "horario_inicio", nullable = false)
+    private String horarioInicio;
+
+    @Column(name = "horario_fim", nullable = false)
+    private String horarioFim;
+
+    @Column(length = 1000)
+    private String requisitos;
+
+    @Column(nullable = false)
+    private String contratante;
+
+    private Double avaliacao;
+
+    private Boolean possuiAssinatura;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StatusServico status;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "empregador_id", nullable = false)
-    private Usuario empregador;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "prestador_id")
-    private Usuario prestador;
-
-    @PrePersist
-    @PreUpdate
-    public void calcularValorLiquido() {
-        if (this.valorSugerido != null) {
-            this.valorLiquido = this.valorSugerido.multiply(new BigDecimal("0.80"));
-        }
-    }
 }

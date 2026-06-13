@@ -7,8 +7,13 @@ import java.time.LocalDateTime;
 public record ServicoResumoDTO(
     Long id,
     String tipoServico,
-    LocalDateTime dataHora,
-    String localizacao,
-    BigDecimal valorLiquido,
+    String categoria,
+    String bairro,
+    String cidade,
+    String estado,
+    BigDecimal valor,
+    String dataServico,
+    String horarioInicio,
+    Boolean possuiAssinatura,
     StatusServico status
 ) {}
