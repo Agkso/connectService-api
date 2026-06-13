@@ -5,3 +5,11 @@ spring:
     hibernate:
       ddl-auto: update
     defer-datasource-initialization: true
+  flyway:
+    enabled: false
+  h2:
+    console:
+      enabled: false
+  sql:
+    init:
+      mode: always
